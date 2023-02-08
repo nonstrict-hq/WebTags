@@ -18,7 +18,7 @@ struct Command: ParsableCommand {
         commandName: "webtags",
         abstract: "Element definitions from web specifications.",
         discussion: "Generates JSON output describing all elements, attributes and predefined attribute values from the given web browser specifications.",
-        version: "0.1"
+        version: "0.1-unstable"
     )
     
     @Option(name: .customLong("specs"), help: "Short names of the specs to parse and output.")
@@ -38,6 +38,8 @@ struct Command: ParsableCommand {
         LoggingSystem.bootstrap(StreamLogHandler.standardError)
         let logger = Logger(label: "WebTags")
             .withLogLevel(logLevel)
+        
+        let runStartedDate = Date()
         logger.notice("Started run.", metadata: ["logLevel": "\(logLevel)", "webRefIndex": "\(webRefIndex)", "specsToGenerate": "\(specsToGenerate.joined(separator: ","))"], source: "\(Self.self)")
         
         // Parse URL
@@ -62,17 +64,20 @@ struct Command: ParsableCommand {
                 .filter { specsToGenerate.contains($0.shortname) }
                 .map { try WebRefCrawlResultTransformer(crawlResult: $0, baseURL: indexURL, parentLogger: logger) }
                 .map { try $0.transform() }
-            logger.info("Specs parsed.", metadata: ["specsToGenerate": "\(specsToGenerate.joined(separator: ","))"], source: "\(Self.self)")            
+            logger.info("Specs parsed.", metadata: ["specsToGenerate": "\(specsToGenerate.joined(separator: ","))"], source: "\(Self.self)")
+            
+            let webTags = WebTags(generatedAt: runStartedDate, generatedSpecs: specsToGenerate, specs: parsedSpecs)
             
             // Encode output as JSON
             logger.debug("Generating JSON...", source: "\(Self.self)")
             let encoder = JSONEncoder()
+            encoder.dateEncodingStrategy = .iso8601
             if prettyPrint {
                 encoder.outputFormatting = [.prettyPrinted, .sortedKeys, .withoutEscapingSlashes]
             } else {
                 encoder.outputFormatting = [.withoutEscapingSlashes]
             }
-            let jsonData = try encoder.encode(parsedSpecs)
+            let jsonData = try encoder.encode(webTags)
             guard let jsonString = String(data: jsonData, encoding: .utf8) else {
                 throw EncodingFailedError(message: "Failed to convert JSON data to string.")
             }

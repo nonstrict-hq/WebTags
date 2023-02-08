@@ -12,12 +12,21 @@ private let globalElementIdentifiers: Set<String> = [
     "core-attributes", // SVG2
 ]
 
+struct WebTags: Encodable {
+    let generatedAt: Date
+    let generatedSpecs: [String]
+    let generator = Command.configuration.commandName
+    let generatorVersion = Command.configuration.version
+    let generatorUrl = "https://github.com/nonstrict-hq/WebTags"
+    let specs: [Spec]
+}
+
 struct Spec: Encodable {
     let organization: String
     let title: String
     let shortname: String
     let url: URL
-    let date: String
+    let date: Date
     
     let globalAttributes: [Attribute]
     let elements: [Element]
@@ -35,12 +44,24 @@ struct Spec: Encodable {
         case elements
     }
     
+    private static let dateFormatter = {
+        let formatter = DateFormatter()
+        formatter.locale = Locale(identifier: "en_US_POSIX")
+        formatter.timeZone = TimeZone(secondsFromGMT: 0)
+        formatter.dateFormat = "d MMMM yyyy"
+        return formatter
+    }()
+    
     init(crawlResult: WebRefCrawl.Result, crawledElements: [WebRefCrawl.Element], crawledDfns: [WebRefCrawl.Dfn]) throws {
         organization = crawlResult.organization
         title = crawlResult.title
         shortname = crawlResult.shortname
         url = crawlResult.url
-        date = crawlResult.date
+        
+        guard let date = Spec.dateFormatter.date(from: crawlResult.date) else {
+            throw InvalidCrawlResultError(message: "Invalid date: \(crawlResult.date)", result: crawlResult)
+        }
+        self.date = date
         
         let attributes = try crawledDfns.compactMap(Attribute.init)
         let attributeValues = try crawledDfns.compactMap(AttributeValue.init)
