@@ -7,6 +7,9 @@
 
 import Foundation
 import Logging
+#if canImport(FoundationNetworking)
+import FoundationNetworking
+#endif
 
 struct WebRefCrawlResultTransformer {
     private let crawlResult: WebRefCrawl.Result

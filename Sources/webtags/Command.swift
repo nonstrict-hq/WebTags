@@ -8,6 +8,9 @@
 import ArgumentParser
 import Foundation
 import Logging
+#if canImport(FoundationNetworking)
+import FoundationNetworking
+#endif
 
 @main
 struct Command: ParsableCommand {

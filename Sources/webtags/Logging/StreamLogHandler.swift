@@ -8,6 +8,18 @@
 import Foundation
 import Logging
 
+#if os(macOS) || os(iOS) || os(tvOS) || os(watchOS)
+import Darwin
+#elseif os(Windows)
+import CRT
+#elseif canImport(Glibc)
+import Glibc
+#elseif canImport(WASILibc)
+import WASILibc
+#else
+#error("Unsupported runtime")
+#endif
+
 private let dateFormatter: DateFormatter = {
     let formatter = DateFormatter()
     formatter.locale = Locale(identifier: "en_US")
@@ -112,8 +124,22 @@ public struct StreamLogHandler: LogHandler {
 }
 
 internal typealias CFilePointer = UnsafeMutablePointer<FILE>
+// Prevent name clashes
+#if os(macOS) || os(tvOS) || os(iOS) || os(watchOS)
 let systemStderr = Darwin.stderr
 let systemStdout = Darwin.stdout
+#elseif os(Windows)
+let systemStderr = CRT.stderr
+let systemStdout = CRT.stdout
+#elseif canImport(Glibc)
+let systemStderr = Glibc.stderr!
+let systemStdout = Glibc.stdout!
+#elseif canImport(WASILibc)
+let systemStderr = WASILibc.stderr!
+let systemStdout = WASILibc.stdout!
+#else
+#error("Unsupported runtime")
+#endif
 
 /// A wrapper to facilitate `print`-ing to stderr and stdio that
 /// ensures access to the underlying `FILE` is locked to prevent
