@@ -27,7 +27,7 @@ struct Command: ParsableCommand {
     @Option(name: .customLong("webref-index"), help: "URL to the Webref data index, file:// URL are supported.")
     var webRefIndex = "https://w3c.github.io/webref/ed/index.json"
     
-    @Option(name: .customLong("loglevel"), help: "Log level to use.")
+    @Option(help: "Log level to use.")
     var logLevel: Logger.Level = .warning
     
     func run() throws {
