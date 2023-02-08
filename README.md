@@ -29,9 +29,14 @@ The most notable exceptions are:
 - [Caniuse](https://github.com/Fyrd/caniuse) contains a lot of info, but unclear how it is updated and a lot of noise.
 - [MDN](https://github.com/mdn/content) very complete and high quality, but very hard to parse.
 
+## Credits
+
+WebTags is an Open Source project from [Nonstrict](https://nonstrict.eu).
+Created by [Mathijs Kadijk](https://github.com/mac-cain13) and [Tom Lokhorst](https://github.com/tomlokhorst).
+
 ## License
 
-WebTags is Open Source from [Nonstrict](https://nonstrict.eu) created by [Mathijs Kadijk](https://github.com/mac-cain13) and [Tom Lokhorst](https://github.com/tomlokhorst), released under [MIT License](LICENSE.md).
+WebTags licensed under [MIT License](LICENSE.md).
 
 Generated content is under the license of the respective owners:
 - WhatWG HTML spec is licensed under [CC BY 4.0](https://github.com/whatwg/html/blob/main/LICENSE)
