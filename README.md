@@ -11,7 +11,7 @@ You can use this data to build other tools from, like a DSL, validator or autoco
 ## How to use
 
 You have multiple options:
-- Use the hosted JSON files on https://webtags.dev (automatically updated every 6 hours)
+- Use the hosted JSON files on https://webtags.nonstrict.eu/webtags.json (automatically updated every 6 hours)
 - Generate the JSON file yourself by:
   - Running one of the [binary releases](https://github.com/nonstrict-hq/WebTags/releases).
   - Running from source: `swift run`
